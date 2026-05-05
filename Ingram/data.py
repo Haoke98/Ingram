@@ -36,6 +36,8 @@ class Data:
 
     def _load_state_from_disk(self):
         """加载上次运行状态"""
+        if self.config.no_resume:
+            return
         # done & found & run time
         state_file = os.path.join(self.config.out_dir, f".{self.taskid}")
         if os.path.exists(state_file):
@@ -187,7 +189,10 @@ class SnapshotPipeline:
 
     def process(self, core):
         while not core.finish():
-            exploit_func, results = self.get()
+            try:
+                exploit_func, results = self.pipeline.get(timeout=5)
+            except Exception:
+                continue
             self.workers.submit(self._snapshot, exploit_func, results)
             with self.task_count_lock:
                 self.task_count += 1
