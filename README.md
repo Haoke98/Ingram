@@ -166,6 +166,9 @@ config.set_val('WXTOKEN', '这里写token')
     <img alt="Ingram" src="https://github.com/jorhelp/imgs/blob/master/Ingram/show_rtsp.png">
 </div>
 
+## 开发计划
+* [ ] 利用 [GeoIP](https://dev.maxmind.com/geoip/updating-databases) 实现可以交互式选择机将扫描的地理区域
+* [ ] 实现分布式扫描
 
 ## 免责声明
 

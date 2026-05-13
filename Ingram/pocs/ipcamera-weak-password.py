@@ -15,13 +15,13 @@ class IPCameraWeakPassword(POCTemplate):
         self.ref = ''
         self.level = POCTemplate.level.low
         self.desc = """"""
-        self.headers = {'Connection': 'close', 'User-Agent': self.config.user_agent}
+        self.headers = {'User-Agent': self.config.user_agent}
 
     def verify(self, ip, port=80):
         for user in self.config.users:
             for password in self.config.passwords:
                 try:
-                    r = requests.get(url=f"http://{ip}:{port}", auth=(user, password), timeout=self.config.timeout, headers=self.headers, verify=False)
+                    r = self.session.get(url=f"http://{ip}:{port}", auth=(user, password), timeout=self.config.timeout, headers=self.headers, verify=False)
                     if r.status_code == 200:
                         return ip, str(port), self.product, str(user), str(password), self.name
                 except Exception as e:

@@ -17,7 +17,7 @@ class XioingmaiWeakPassword(POCTemplate):
         self.desc = 'Xiongmai 弱口令'
 
     def verify(self, ip, port=80):
-        headers = {'Connection': 'close', 'User-Agent': self.config.user_agent}
+        headers = {'User-Agent': self.config.user_agent}
         for user in self.config.users:
             for password in self.config.passwords:
                 url = f"http://{ip}:{port}/Login.htm"
@@ -27,7 +27,7 @@ class XioingmaiWeakPassword(POCTemplate):
                     'password': password
                 }
                 try:
-                    r = requests.get(url, headers=headers, data=data, verify=False, timeout=self.config.timeout)
+                    r = self.session.get(url, headers=headers, data=data, verify=False, timeout=self.config.timeout)
                     if r.status_code == 200 and 'failed' not in r.text:
                         ch_num = 0
                         if channel := re.findall(r'g_channelNumber=(.*);', r.text):

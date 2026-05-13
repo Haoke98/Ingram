@@ -15,7 +15,7 @@ class AxisWeakPassword(POCTemplate):
         self.ref = ''
         self.level = POCTemplate.level.low
         self.desc = """"""
-        self.headers = {'Connection': 'close', 'User-Agent': self.config.user_agent}
+        self.headers = {'User-Agent': self.config.user_agent}
 
     def verify(self, ip, port=80):
         _users = ['root']    # default user
@@ -23,7 +23,7 @@ class AxisWeakPassword(POCTemplate):
         for user in _users:
             for password in _passwords:
                 try:
-                    r = requests.get(url=f"http://{ip}:{port}/jpg/image.jpg", auth=requests.auth.HTTPDigestAuth(user, password), timeout=self.config.timeout, headers=self.headers, verify=False)
+                    r = self.session.get(url=f"http://{ip}:{port}/jpg/image.jpg", auth=requests.auth.HTTPDigestAuth(user, password), timeout=self.config.timeout, headers=self.headers, verify=False)
                     if r.status_code == 200:
                         return ip, str(port), self.product, str(user), str(password), self.name
                 except Exception as e:

@@ -15,7 +15,7 @@ class NuuoWeakPassword(POCTemplate):
         self.ref = ''
         self.level = POCTemplate.level.low
         self.desc = """"""
-        self.headers = {'Connection': 'close', 'User-Agent': self.config.user_agent}
+        self.headers = {'User-Agent': self.config.user_agent, 'Content-Type': 'application/x-www-form-urlencoded'}
 
     def verify(self, ip, port=80):
         for user in self.config.users:
@@ -27,7 +27,7 @@ class NuuoWeakPassword(POCTemplate):
                     'submit': 'Login'
                 }
                 try:
-                    r = requests.post(f"http://{ip}:{port}/login.php", data=data, timeout=self.config.timeout, headers=self.headers, verify=False)
+                    r = self.session.post(f"http://{ip}:{port}/login.php", data=data, timeout=self.config.timeout, headers=self.headers, verify=False)
                     if r.status_code == 200 and 'loginfail' not in r.text:
                         return ip, str(port), self.product, str(user), str(password), self.name
                 except Exception as e:

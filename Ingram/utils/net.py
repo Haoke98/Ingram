@@ -18,12 +18,13 @@ def get_ip_seg_len(ip_seg: str) -> int:
         return 1
 
 
-def get_all_ip(ip_seg: str) -> list:
+def get_all_ip(ip_seg: str):
     """获取一个 IP 段内的所有 IP"""
     if '-' in ip_seg or '/' in ip_seg:
-        return [i.strNormal() for i in IPy.IP(ip_seg, make_net=True)]
+        for i in IPy.IP(ip_seg, make_net=True):
+            yield i.strNormal()
     else:
-        return [ip_seg]
+        yield ip_seg
 
 
 def scrapy_useragent() -> None:
