@@ -6,6 +6,8 @@ from concurrent.futures import ThreadPoolExecutor
 from queue import Queue
 from threading import Lock, RLock, Thread
 
+import itertools
+
 from loguru import logger
 
 from .utils import common
@@ -56,22 +58,26 @@ class Data:
                     self.add_total(net.get_ip_seg_len(strip_line))
 
     def _generate_ip(self):
-        current, remain = 0, []
+        current = 0
+        remain_gen = None
         with open(self.config.in_file, 'r') as f:
             if self.done:
                 for line in f:
                     if (strip_line := line.strip()) and not line.startswith('#'):
-                        current += net.get_ip_seg_len(strip_line)
+                        seg_len = net.get_ip_seg_len(strip_line)
+                        current += seg_len
                         if current == self.done:
                             break
                         elif current < self.done:
                             continue
                         else:
+                            skip_count = self.done - (current - seg_len)
                             ips = net.get_all_ip(strip_line)
-                            remain = ips[(self.done - current):]
+                            remain_gen = itertools.islice(ips, skip_count, None)
                             break
-                for ip in remain:
-                    yield ip
+                if remain_gen:
+                    for ip in remain_gen:
+                        yield ip
 
             for line in f:
                 if (strip_line := line.strip()) and not line.startswith('#'):
