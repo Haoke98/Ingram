@@ -22,7 +22,7 @@ class GeovisionWeakPassword(POCTemplate):
         }
 
     def verify(self, ip, port=80):
-        session = requests.session()
+        session = self.session
 
         # 先获取构造登录信息需要的变量
         info_url = f"http://{ip}:{port}/ssi.cgi/Login.htm"

@@ -15,13 +15,13 @@ class NetwaveWeakPassword(POCTemplate):
         self.ref = ''
         self.level = POCTemplate.level.low
         self.desc = """"""
-        self.headers = {'Connection': 'close', 'User-Agent': self.config.user_agent}
+        self.headers = {'User-Agent': self.config.user_agent}
 
     def verify(self, ip, port=80):
         for user in self.config.users:
             for password in self.config.passwords:
                 try:
-                    r = requests.get(
+                    r = self.session.get(
                         url=f"http://{ip}:{port}/snapshot.cgi",
                         auth=(user, password),
                         timeout=self.config.timeout,

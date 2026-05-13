@@ -28,6 +28,9 @@ class POCTemplate:
         self.level = self.level.low
         # 描述
         self.desc = """"""
+        # Session
+        self.session = requests.Session()
+        self.session.headers.update({'Connection': 'keep-alive', 'User-Agent': self.config.user_agent})
 
     def get_file_name(self, file):
         return os.path.basename(file).split('.')[0]
@@ -49,12 +52,11 @@ class POCTemplate:
         通过设置 stream=True 来友好地下载较大的媒体文件
         """
         img_path = os.path.join(self.config.out_dir, self.config.snapshots, img_file_name)
-        headers = {'Connection': 'close', 'User-Agent': self.config.user_agent}
         try:
             if auth:
-                res = requests.get(url, auth=auth, timeout=self.config.timeout, verify=False, headers=headers, stream=True)
+                res = self.session.get(url, auth=auth, timeout=self.config.timeout, verify=False, stream=True)
             else:
-                res = requests.get(url, timeout=self.config.timeout, verify=False, headers=headers, stream=True)
+                res = self.session.get(url, timeout=self.config.timeout, verify=False, stream=True)
             if res.status_code == 200 and 'head' not in res.text:
                 with open(img_path, 'wb') as f:
                     # 每次写入 10 KB

